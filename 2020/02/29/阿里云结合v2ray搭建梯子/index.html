@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 4.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/font-awesome.min.css">
+
+
+<script id="hexo-configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    hostname: new URL('http://yoursite.com').hostname,
+    root: '/',
+    scheme: 'Gemini',
+    version: '7.7.0',
+    exturl: false,
+    sidebar: {"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},
+    copycode: {"enable":false,"show_result":false,"style":null},
+    back2top: {"enable":true,"sidebar":false,"scrollpercent":false},
+    bookmark: {"enable":false,"color":"#222","save":"auto"},
+    fancybox: false,
+    mediumzoom: false,
+    lazyload: false,
+    pangu: false,
+    comments: {"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},
+    algolia: {
+      appID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    },
+    localsearch: {"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},
+    path: '',
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}
+  };
+</script>
+
+  <meta name="description" content="阿里云结合v2ray搭建梯子是由：以前的梯子都是使用其他人搭建好的。最近由于不可抗力的原因导致一个星期无法使用了。-&#x3D;- 没有google的日子太难受了。故在 github中寻找合适的替代品：v2ray。 环境准备准备vps服务器服务器的选择需要根据个人的需求来决定：原因：本人只需要一个梯子。故：选择国内的服务器-阿里云-轻型应用服务器为什么选择阿里云-轻型应用服务器  价格：国外的服务器最低也是">
+<meta property="og:type" content="article">
+<meta property="og:title" content="阿里云结合v2ray搭建梯子">
+<meta property="og:url" content="http://yoursite.com/2020/02/29/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90/index.html">
+<meta property="og:site_name" content="北风的日常">
+<meta property="og:description" content="阿里云结合v2ray搭建梯子是由：以前的梯子都是使用其他人搭建好的。最近由于不可抗力的原因导致一个星期无法使用了。-&#x3D;- 没有google的日子太难受了。故在 github中寻找合适的替代品：v2ray。 环境准备准备vps服务器服务器的选择需要根据个人的需求来决定：原因：本人只需要一个梯子。故：选择国内的服务器-阿里云-轻型应用服务器为什么选择阿里云-轻型应用服务器  价格：国外的服务器最低也是">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F.png">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E9%A6%96%E9%A1%B5.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9UUID.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E7%AB%AF%E5%8F%A3.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E5%8A%A0%E5%AF%86%E5%8D%8F%E8%AE%AE.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%B8%8B%E8%BD%BDconfig%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E5%90%AF%E5%8A%A8.jpg">
+<meta property="og:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-tcp-bbr.png">
+<meta property="article:published_time" content="2020-02-29T02:46:53.000Z">
+<meta property="article:modified_time" content="2020-04-28T10:02:01.728Z">
+<meta property="article:author" content="jirun.yang">
+<meta property="article:tag" content="阿里云">
+<meta property="article:tag" content="v2ray">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg">
+
+<link rel="canonical" href="http://yoursite.com/2020/02/29/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome: false,
+    isPost: true
+  };
+</script>
+
+  <title>阿里云结合v2ray搭建梯子 | 北风的日常</title>
+  
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-156230210-1"></script>
+    <script>
+      if (CONFIG.hostname === location.hostname) {
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-156230210-1');
+      }
+    </script>
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-meta">
+
+    <div>
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">北风的日常</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+        <p class="site-subtitle">不定时更新的日常</p>
+  </div>
+
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+</div>
+
+
+<nav class="site-nav">
+  
+  <ul id="menu" class="menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-fw fa-home"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-fw fa-tags"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-fw fa-th"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-fw fa-archive"></i>归档</a>
+
+  </li>
+  </ul>
+
+</nav>
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content">
+            
+
+  <div class="posts-expand">
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block " lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/02/29/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="jirun.yang">
+      <meta itemprop="description" content="已忘却儿时记忆,亦未成深造学府。远帆荆州谋生计,学成。自已得天下,衣食无忧,学仲永,染一身恶疾。终日碌碌无为。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="北风的日常">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          阿里云结合v2ray搭建梯子
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-02-29 10:46:53" itemprop="dateCreated datePublished" datetime="2020-02-29T10:46:53+08:00">2020-02-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-calendar-check-o"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-04-28 18:02:01" itemprop="dateModified" datetime="2020-04-28T18:02:01+08:00">2020-04-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="阿里云结合v2ray搭建梯子"><a href="#阿里云结合v2ray搭建梯子" class="headerlink" title="阿里云结合v2ray搭建梯子"></a>阿里云结合v2ray搭建梯子</h1><p>是由：以前的梯子都是使用其他人搭建好的。最近由于不可抗力的原因导致一个星期无法使用了。-=- 没有google的日子太难受了。故在 github中寻找合适的替代品：v2ray。</p>
+<h2 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a>环境准备</h2><h3 id="准备vps服务器"><a href="#准备vps服务器" class="headerlink" title="准备vps服务器"></a>准备vps服务器</h3><p>服务器的选择需要根据个人的需求来决定：<br/><br>原因：本人只需要一个梯子。<br/><br>故：选择国内的服务器-阿里云-轻型应用服务器<br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg" alt=""><br>为什么选择阿里云-轻型应用服务器</p>
+<ul>
+<li>价格：国外的服务器最低也是5美元一个月，这个配置是24元一个月</li>
+<li>网速：阿里云的香港和新加坡网速都还是可以的。</li>
+</ul>
+<h3 id="安装v2ray服务端"><a href="#安装v2ray服务端" class="headerlink" title="安装v2ray服务端"></a>安装v2ray服务端</h3><ul>
+<li>安装 xshell<br><a href="http://www.freedown9.com/html/smallsoftware/Xshell_setup_wm.exe" target="_blank" rel="noopener">国外云盘下载</a></li>
+<li>登录服务器(如果不懂自行百度)<br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E8%BF%9E%E6%8E%A5%E6%9C%8D%E5%8A%A1%E5%99%A8.jpg" alt=""></li>
+<li>连接成功后，就可以复制粘贴代码部署了。<br>Debian8/Debian7/Ubuntu16/Ubuntu14/CentOS7 v2ray一键部署管理脚本：</li>
+</ul>
+<p>安装脚本命令：</p>
+<pre><code>wget -N --no-check-certificate https://raw.githubusercontent.com/KiriKira/v2ray.fun/kiriMod/install.sh &amp;&amp; bash install.sh</code></pre><p>卸载脚本命令：</p>
+<pre><code>wget -N --no-check-certificate https://raw.githubusercontent.com/KiriKira/v2ray.fun/kiriMod/uninstall.sh &amp;&amp; bash uninstall.sh</code></pre><p><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E5%AE%89%E8%A3%85%E6%88%90%E5%8A%9F.png" alt=""></p>
+<h4 id="v2ray-配置"><a href="#v2ray-配置" class="headerlink" title="v2ray 配置"></a>v2ray 配置</h4><p><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E9%A6%96%E9%A1%B5.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9UUID.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E7%AB%AF%E5%8F%A3.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E4%BC%A0%E8%BE%93%E6%96%B9%E5%BC%8F.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%BF%AE%E6%94%B9%E5%8A%A0%E5%AF%86%E5%8D%8F%E8%AE%AE.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-%E4%B8%8B%E8%BD%BDconfig%E9%85%8D%E7%BD%AE%E6%96%87%E4%BB%B6.jpg" alt=""><br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-v2ray%E5%90%AF%E5%8A%A8.jpg" alt=""></p>
+<h4 id="一键加速VPS服务器"><a href="#一键加速VPS服务器" class="headerlink" title="一键加速VPS服务器"></a>一键加速VPS服务器</h4><p>加速教程：谷歌BBR加速教程<br>  wget –no-check-certificate <a href="https://github.com/teddysun/across/raw/master/bbr.sh" target="_blank" rel="noopener">https://github.com/teddysun/across/raw/master/bbr.sh</a></p>
+<p>  chmod +x bbr.sh</p>
+<p>  ./bbr.sh</p>
+<p>把上面整个代码复制后粘贴进去，不动的时候按回车，然后耐心等待，最后重启vps服务器即可。<br>输入reboot来重启服务器，确保加速生效，bbr加速脚本是开机自动启动，装一次就可以了。<br>服务器重启成功并重新连接服务器后，输入命令lsmod | grep bbr 如果出现tcp_bbr字样表示bbr已安装并启动成功。如图：<br><img src="https://yangjrun-blog.oss-cn-hangzhou.aliyuncs.com/images/%E9%98%BF%E9%87%8C%E4%BA%91%E7%BB%93%E5%90%88v2ray%E6%90%AD%E5%BB%BA%E6%A2%AF%E5%AD%90-tcp-bbr.png" alt=""></p>
+<h3 id="安装v2ray客户端"><a href="#安装v2ray客户端" class="headerlink" title="安装v2ray客户端"></a>安装v2ray客户端</h3><p>客户端可以参照（-=- 我也是按照这个教程来的）<br><a href="http://blog.free-air.org/%e8%87%aa%e5%bb%bav2ray%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%95%99%e7%a8%8b/" target="_blank" rel="noopener">http://blog.free-air.org/%e8%87%aa%e5%bb%bav2ray%e6%9c%8d%e5%8a%a1%e5%99%a8%e6%95%99%e7%a8%8b/</a></p>
+<h2 id="出现的问题"><a href="#出现的问题" class="headerlink" title="出现的问题"></a>出现的问题</h2><ol>
+<li>服务器ping 的通。但是无法使用。<br><br>解决：阿里云端口没有开放。设置防火墙就解决了</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%98%BF%E9%87%8C%E4%BA%91/" rel="tag"># 阿里云</a>
+              <a href="/tags/v2ray/" rel="tag"># v2ray</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/01/17/%E9%98%BF%E9%87%8C%E4%BA%91%20oss%20%E4%BD%BF%E7%94%A8/" rel="prev" title="阿里云 oss 使用">
+      <i class="fa fa-chevron-left"></i> 阿里云 oss 使用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/20/%E8%A7%A3%E5%86%B3centos7%E4%BD%BF%E7%94%A8yum%E5%AE%89%E8%A3%85mysql%20%E4%B8%8B%E8%BD%BD%E9%80%9F%E5%BA%A6%E6%85%A2%E7%9A%84%E9%97%AE%E9%A2%98/" rel="next" title="解决centos7使用yum安装mysql 下载速度慢的问题">
+      解决centos7使用yum安装mysql 下载速度慢的问题 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+  </div>
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let activeClass = CONFIG.comments.activeClass;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#阿里云结合v2ray搭建梯子"><span class="nav-number">1.</span> <span class="nav-text">阿里云结合v2ray搭建梯子</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#环境准备"><span class="nav-number">1.1.</span> <span class="nav-text">环境准备</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#准备vps服务器"><span class="nav-number">1.1.1.</span> <span class="nav-text">准备vps服务器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装v2ray服务端"><span class="nav-number">1.1.2.</span> <span class="nav-text">安装v2ray服务端</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#v2ray-配置"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">v2ray 配置</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一键加速VPS服务器"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">一键加速VPS服务器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#安装v2ray客户端"><span class="nav-number">1.1.3.</span> <span class="nav-text">安装v2ray客户端</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#出现的问题"><span class="nav-number">1.2.</span> <span class="nav-text">出现的问题</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="jirun.yang"
+      src="/images/avatar.gif">
+  <p class="site-author-name" itemprop="name">jirun.yang</p>
+  <div class="site-description" itemprop="description">已忘却儿时记忆,亦未成深造学府。远帆荆州谋生计,学成。自已得天下,衣食无忧,学仲永,染一身恶疾。终日碌碌无为。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">16</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/yangjrun" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;yangjrun" rel="noopener" target="_blank"><i class="fa fa-fw fa-github"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="/yangjrun@outlook.com" title="E-Mail → yangjrun@outlook.com"><i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">jirun.yang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> 强力驱动 v4.2.0
+  </div>
+  <span class="post-meta-divider">|</span>
+  <div class="theme-info">主题 – <a href="https://theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> v7.7.0
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
